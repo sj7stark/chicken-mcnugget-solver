@@ -12,6 +12,10 @@ def nugget_solve(pack_size_1, pack_size_2, pack_size_3, threshold_solve=100):
     # current count of sucessful consecutive solves
     consecutive_solve = 0
 
+    # total solve attempts
+    # cancel if too many
+    total_solves = 0
+
     # the number of McNuggets we try to purchase and increment by 1 after each solve
     nugget_rhs = 1
 
@@ -36,6 +40,7 @@ def nugget_solve(pack_size_1, pack_size_2, pack_size_3, threshold_solve=100):
         
         # solve the problem
         opt_model.optimize()
+        total_solves += 1
     
         # if there is no solution, set the new obj and reset consecutive_solve counter
         if opt_model.status == 3:
@@ -51,6 +56,11 @@ def nugget_solve(pack_size_1, pack_size_2, pack_size_3, threshold_solve=100):
 
         # clear model constraints
         opt_model.remove(opt_model.getConstrs()[0])
+
+        # exit if we have tried too many solves
+        if total_solves > 750:
+            mcnuggets_sol = "Could not find the solution"
+            break
 
     # return the solution
     return mcnuggets_sol
