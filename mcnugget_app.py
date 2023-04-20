@@ -10,9 +10,9 @@ with st.sidebar:
     st.header('Pack Sizes')
 
     # sliders to set the values
-    pack_size_1 = st.slider('Pack Size 1',min_value=3,max_value=9,value=3,step=6)
-    pack_size_2 = st.slider('Pack Size 2',min_value=2,max_value=8,value=4,step=2)
-    pack_size_3 = st.slider('Pack Size 3',min_value=1,max_value=20,value=10,step=1)
+    pack_size_1 = st.slider('Pack Size 1',min_value=1,max_value=20,value=6,step=1)
+    pack_size_2 = st.slider('Pack Size 2',min_value=1,max_value=20,value=9,step=1)
+    pack_size_3 = st.slider('Pack Size 3',min_value=1,max_value=20,value=20,step=1)
 
     # button to initiate solve
     solve_btn = st.button('Solve')
