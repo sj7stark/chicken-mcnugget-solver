@@ -1,0 +1,2 @@
+gurobipy==10.0.1
+streamlit==1.21.0
