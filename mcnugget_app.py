@@ -3,7 +3,7 @@ import streamlit as st
 from mcnugget_solver import nugget_solve
 
 # header
-st.header('McNugget Problem Solver')
+st.markdown('<font size="7">**# McNugget Problem Solver**')
 
 # Separate into tabs
 readme_tab, solve_tab = st.tabs(["ReadMe", "Solve"])
