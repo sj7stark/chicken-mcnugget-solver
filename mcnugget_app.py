@@ -5,6 +5,15 @@ from mcnugget_solver import nugget_solve
 # header
 st.header('McNugget Problem Solver')
 
+# Separate into tabs
+readme_tab, solve_tab = st.tabs(["ReadMe", "Solve"])
+
+with readme_tab:
+   st.header("ReadMe")
+   st.markdown("# Introduction")
+   st.markdown("When you go to McDonald's, you can order their popular Chicken McNuggets in various quantities. In the past, these quantities were ")
+
+
 # side bar for pack size
 with st.sidebar:
     st.header('Pack Sizes')
