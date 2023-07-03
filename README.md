@@ -1,6 +1,6 @@
 # chicken-mcnugget-solver
 
-This repository contains a Jupyter Notebook that solves a Chicken McNugget Problem using Mixed Integer Linear Programming (MILP).
+This repository contains a Jupyter Notebook that solves a Chicken McNugget Problem using Mixed Integer Linear Programming (MILP). It also contains a Streamlit web app. You can test out the web app here: https://chicken-mcnugget-solver.streamlit.app/.
 
 # Introduction
 
@@ -14,7 +14,7 @@ If you would like more information, please look take a look at this page from [A
 
 There is a closed form solution for the Chicken McNugget Problem when there are only 2 pack sizes. Please see the Art of Problem Solving link from above for more information. For 3 or more different pack sizes, however, there is no closed form solution.
 
-# MILP Method
+# ILP Method
 
 Consider the following equation:
 
