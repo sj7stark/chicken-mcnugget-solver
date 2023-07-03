@@ -4,7 +4,7 @@ a Chicken McNugget Problem. This entrypoint page contains a readme for the app. 
 a space for setting up and solving a problem, information regarding the problem, and more.
 """
 
-# import the streamlit package
+# imports
 import streamlit as st
 
 st.set_page_config(
