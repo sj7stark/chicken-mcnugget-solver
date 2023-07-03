@@ -1,5 +1,5 @@
 import gurobipy as gp
-import math
+
 
 def nugget_solve(pack_size_1, pack_size_2, pack_size_3, threshold_solve=100):
 
@@ -8,67 +8,61 @@ def nugget_solve(pack_size_1, pack_size_2, pack_size_3, threshold_solve=100):
                  2: pack_size_2,
                  3: pack_size_3
                  }
-    
-    # check and see if a solution is even possible
-    gcd = math.gcd(math.gcd(pack_size_1,pack_size_2),pack_size_3)
 
-    # only solve if gcd = 1
-    if gcd == 1:
+    # current count of sucessful consecutive solves
+    consecutive_solve = 0
 
-        # current count of sucessful consecutive solves
-        consecutive_solve = 0
+    # total solve attempts
+    total_solves = 0
 
-        # total solve attempts
-        # cancel if too many
-        total_solves = 0
+    # solve threshold
+    solve_thresh = 1000
 
-        # the number of McNuggets we try to purchase and increment by 1 after each solve
-        nugget_rhs = 1
+    # the number of McNuggets we try to purchase and increment by 1 after each solve
+    nugget_rhs = 1
 
-        # largest number of McNuggets that CANNOT be purchased (changes after each solve with no solution)
-        mcnuggets_sol = 0
+    # largest number of McNuggets that CANNOT be purchased (changes after each solve with no solution)
+    mcnuggets_sol = 0
 
-        # create model
-        opt_model = gp.Model(name="McNugget_Solver")
+    # create model
+    opt_model = gp.Model(name="McNugget_Solver")
 
-        # create variables
-        x = opt_model.addVars(pack_size.keys(), vtype=gp.GRB.INTEGER, name='x')
+    # create variables
+    x = opt_model.addVars(pack_size.keys(), vtype=gp.GRB.INTEGER, name='x')
 
-        # We don't need to optimize anything, so just make it nothing
-        opt_model.ModelSense = gp.GRB.MAXIMIZE
-        opt_model.setObjective(0)
+    # We don't need to optimize anything, so just make the objective function maximize 0
+    opt_model.ModelSense = gp.GRB.MAXIMIZE
+    opt_model.setObjective(0)
 
-        # loop
-        while consecutive_solve != threshold_solve:
+    # loop
+    while consecutive_solve != threshold_solve:
 
-            # add the constraint to the model
-            opt_model.addConstr(gp.quicksum(pack_size[i]*x[i] for i in pack_size.keys() ) == nugget_rhs)
-            
-            # solve the problem
-            opt_model.optimize()
-            total_solves += 1
-        
-            # if there is no solution, set the new obj and reset consecutive_solve counter
-            if opt_model.status == 3:
-                mcnuggets_sol = nugget_rhs
-                consecutive_solve = 0
+        # add the constraint to the model
+        opt_model.addConstr(gp.quicksum(
+            pack_size[i]*x[i] for i in pack_size.keys()) == nugget_rhs)
 
-            # else, increment the consecutive_solve counter
-            else:
-                consecutive_solve += 1
+        # solve the problem
+        opt_model.optimize()
+        total_solves += 1
 
-            # increment nugget_rhs
-            nugget_rhs += 1
+        # if there is no solution, set the new obj and reset consecutive_solve counter
+        if opt_model.status == 3:
+            mcnuggets_sol = nugget_rhs
+            consecutive_solve = 0
 
-            # clear model constraints
-            opt_model.remove(opt_model.getConstrs()[0])
+        # else, increment the consecutive_solve counter
+        else:
+            consecutive_solve += 1
 
-            # exit if we have tried too many solves
-            if total_solves > 2500:
-                break
+        # increment nugget_rhs
+        nugget_rhs += 1
 
-    else:
-        mcnuggets_sol = "No Solution"
+        # clear model constraints
+        opt_model.remove(opt_model.getConstrs()[0])
+
+        # exit if we have tried too many solves
+        if total_solves > solve_thresh:
+            break
 
     # return the solution
     return mcnuggets_sol
@@ -80,8 +74,7 @@ if __name__ == '__main__':
     pack_size_2 = 9
     pack_size_3 = 20
 
-    mcnuggets_sol = nugget_solve(pack_size_1, pack_size_2, pack_size_3, threshold_solve=100)
+    mcnuggets_sol = nugget_solve(
+        pack_size_1, pack_size_2, pack_size_3, threshold_solve=100)
 
     print(f"{mcnuggets_sol=}")
-
-
