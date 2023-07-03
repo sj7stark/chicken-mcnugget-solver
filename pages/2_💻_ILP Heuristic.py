@@ -31,12 +31,12 @@ st.markdown(
 
     For every number greater than this largest N, there exists some combination of x, y, z that satisfies the above equation.
 
-    The method consists of Solving the MILP Model Below,
+    The method consists of Solving the ILP Model Below,
 
     $max \space 0$
 
     $s.t.$ 
-    
+
     $6x + 9y + 20z = N$  
     $x, y, z$ are integers $>=0$ 
 
