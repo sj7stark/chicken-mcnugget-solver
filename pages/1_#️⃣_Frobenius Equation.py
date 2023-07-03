@@ -23,7 +23,7 @@ st.markdown(
    no solution exists. In the example given in the Intro, :red[**$43$**] is the Frobenius number.
    
    # Closed Form Solution
-   If there are only two $a_{i}$ values, then the Frobenius number $g(a_{1},a_{2})$ is given by
+   If there are only two $a_{i}$ values and their greatest common denominator is not 1, then the Frobenius number $g(a_{1},a_{2})$ is given by
    $g(a_{1},a_{2}) = a_{1}a_{2} - (a_{1}+a_{2})$
    where:
    * $0 < a_{1} < a_{2}$  
