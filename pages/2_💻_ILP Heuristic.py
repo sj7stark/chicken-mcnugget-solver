@@ -36,6 +36,7 @@ st.markdown(
     $max \space 0$
 
     $s.t.$ 
+    
     $6x + 9y + 20z = N$  
     $x, y, z$ are integers $>=0$ 
 
