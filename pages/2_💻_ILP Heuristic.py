@@ -35,9 +35,9 @@ st.markdown(
 
     $max \space 0$
 
-    $s.t.$ <br />
-    $6x + 9y + 20z = N$  <br />
-    $x, y, z$ are integers $>=0$ <br />
+    $s.t.$ 
+    $6x + 9y + 20z = N$  
+    $x, y, z$ are integers $>=0$ 
 
     with a low value for $N$ (that you know is NOT the final answer, like 1), incrementing N by 1, and resolving the MILP. You will get to a point in which you solve a problem, see that there is no solution, and then every new solve after that results in a solution being found. The last $N$ that results in a no solution is your answer.
 
