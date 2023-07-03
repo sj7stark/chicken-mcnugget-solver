@@ -15,23 +15,25 @@ st.set_page_config(
 
 st.markdown(
     """
-   ## Frobenius Equation
+   # Frobenius Equation
    The **Frobenius equation** is
    $a_{1}x_{1} + a_{2}x_{2}+...+a_{n}x_{n}=b$
    where $a_{i}$ are positive integers and $b$ and $x_{i}$ are nonnegative integers.
    The **Frobenius number** is the largest such value for $b$, given values for $a_{i}$, 
    no solution exists. In the example given in the Intro, :red[**$43$**] is the Frobenius number.
-   ## Closed Form Solution
+   
+   # Closed Form Solution
    If there are only two $a_{i}$ values, then the Frobenius number $g(a_{1},a_{2})$ is given by
    $g(a_{1},a_{2}) = a_{1}a_{2} - (a_{1}+a_{2})$
    where:
    * $0 < a_{1} < a_{2}$  
    * $a_{1}$ and $a_{2}$ are both integers  
-   ## Other Problems
+   
+   # Other Problems
    For problems in which we have three or more $a_{i}$, including the Chicken McNugget Problem,
                no-closed form solution exists. This problem is NP-hard for the general case.
                
-   ## No Solution
+   # No Solution
    Depending on the $a_{i}$ values, it's possible to have no solution. For instance, suppose we
    could purchase McNuggets in packs of $2,4,$ and $6$. This would mean that we would only be able to purchase
    McNuggets in even quanities. Thus, there is no Frobenius number, because we could just keep on finding
