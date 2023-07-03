@@ -40,7 +40,7 @@ with st.sidebar:
 if solve_btn:
 
     # for the two pack size case:
-    if (pack_size_1 == 0) and (pack_size_2 != pack_size_3):
+    if (pack_size_1 == 0) and (pack_size_2 != pack_size_3) and math.gcd(pack_size_2,pack_size_3) != 1:
         mcnuggets_sol = pack_size_2 * pack_size_3 - (pack_size_2 + pack_size_3)
         st.markdown(f" ## Solution: {mcnuggets_sol} McNuggets")
 
