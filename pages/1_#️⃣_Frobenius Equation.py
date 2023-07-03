@@ -6,6 +6,13 @@ Chicken McNugget Problem.
 
 import streamlit as st
 
+# adjust the appearance of the tab in the web browser 
+st.set_page_config(
+    page_title="Frobenius Equation",
+    page_icon="#️⃣"
+)
+
+
 st.markdown(
     """
    ## Frobenius Equation
