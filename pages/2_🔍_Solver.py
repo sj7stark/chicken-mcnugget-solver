@@ -2,6 +2,15 @@
 import streamlit as st
 from mcnugget_solver import nugget_solve
 
+# adjust the appearance of the tab in the web browser 
+st.set_page_config(
+    page_title="Solver",
+    page_icon="🔍"
+)
+
+
+# Chicken McNugget Solver
+
 # side bar for pack size
 with st.sidebar:
     st.header('Pack Sizes')
