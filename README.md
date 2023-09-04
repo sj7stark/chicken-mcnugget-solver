@@ -43,3 +43,5 @@ with a low value for $N$ (that you know is NOT the final answer, like 1), increm
 # Python Packages
 
 The only Python package you need to run the notebook contained in this repo is `docplex`. `docplex` comes with CPLEX, a state-of-the-art mathematical programming solver from IBM. You can download a free trial of CPLEX [here](https://www.ibm.com/account/reg/us-en/signup?formid=urx-20028).
+
+The streamlit app was made using `streamlit` and `gurobipy` packages.
