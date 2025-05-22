@@ -69,8 +69,10 @@ if __name__ == '__main__':
     pack_size_1 = 6
     pack_size_2 = 9
     pack_size_3 = 20
+    threshold_solve=500
+    total_solve_lim=10000
 
-    mcnuggets_sol = nugget_solve(pack_size_1, pack_size_2, pack_size_3, threshold_solve=100)
+    mcnuggets_sol = nugget_solve(pack_size_1, pack_size_2, pack_size_3,threshold_solve,total_solve_lim)
 
     print(f"{mcnuggets_sol=}")
 
