@@ -19,11 +19,22 @@ Built by [Steven Stark](https://www.linkedin.com/in/steven-stark).
 
 ## How the solver works
 
-1. **Existence check** — a Frobenius number exists **iff**
-   `gcd(p1, ..., pk) == 1`. If the gcd is greater than 1, every purchasable
-   amount is a multiple of it, so infinitely many amounts are unreachable and
-   the app reports **No Solution**.
-2. **Sliding-window CP-SAT search** — for `N = 1, 2, 3, ...` the app asks
+**Existence check** (both approaches) — a Frobenius number exists **iff**
+`gcd(p1, ..., pk) == 1`. If the gcd is greater than 1, every purchasable
+amount is a multiple of it, so infinitely many amounts are unreachable and
+the app reports **No Solution**.
+
+The Problem Solver page offers two approaches via a dropdown:
+
+1. **Residue-class table / Apéry set (default — instant).** With
+   `a = min(pack_sizes)`, compute for each residue `r` mod `a` the smallest
+   purchasable amount `w_r` in that class (the *Apéry set*), using
+   Nijenhuis's Dijkstra-based shortest-path algorithm on a graph with one
+   node per residue. Then `n` is purchasable iff `n >= w[n % a]`, and the
+   answer comes straight from the Brauer–Shockley formula
+   `g = max(w_r) - a` — no scanning loop at all. See The Math page,
+   section 4, and Sources [8]–[10].
+2. **Sliding-window CP-SAT search.** For `N = 1, 2, 3, ...` the app asks
    [Google OR-Tools' CP-SAT solver](https://developers.google.com/optimization/cp)
    whether `p1*x1 + ... + pk*xk == N` has any solution in non-negative
    integers (a pure feasibility model — no objective function). A counter
@@ -31,6 +42,9 @@ Built by [Steven Stark](https://www.linkedin.com/in/steven-stark).
    non-representable `N` records `answer = N` and resets it. When the counter
    hits 0 — i.e. `max(pack_sizes)` consecutive amounts were all purchasable —
    no unreachable amount can ever occur again, and `answer` is returned.
+
+The two approaches always agree (unit-tested); they differ in speed and in
+what they demonstrate — number theory versus constraint programming.
 
 > **Note on the algorithm spec:** the implementation follows the project
 > owner's algorithm with two small corrections: (1) the counter counts
@@ -41,8 +55,9 @@ Built by [Steven Stark](https://www.linkedin.com/in/steven-stark).
 
 ### Performance fine print
 
-The search issues one CP-SAT solve per candidate `N`. Everyday inputs
-(e.g. `6, 9, 20` → 43) solve in about a second. Adversarial inputs like
+The Apéry-set approach is effectively instant for every allowed input. The
+CP-SAT search issues one solve per candidate `N`: everyday inputs (e.g.
+`6, 9, 20` → 43) take about a second, while adversarial inputs like
 `99, 100` (answer 9,701) require thousands of sequential solves and can take
 a few minutes — well within Streamlit Community Cloud's 1 GB resource limit,
 just not instant.

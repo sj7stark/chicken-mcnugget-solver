@@ -22,6 +22,7 @@ edge cases.
 
 from __future__ import annotations
 
+import heapq
 from functools import reduce
 from math import gcd
 from typing import Callable, Iterable, Optional
@@ -151,6 +152,94 @@ def is_representable_cpsat(target: int, pack_sizes: Iterable[int]) -> bool:
     status = solver.Solve(model)
     # FEASIBLE/OPTIMAL both mean "a combination exists".
     return status in (cp_model.OPTIMAL, cp_model.FEASIBLE)
+
+
+def apery_set(pack_sizes: Iterable[int]) -> dict[int, int]:
+    """Compute the Apéry set of the pack sizes w.r.t. the smallest size.
+
+    Let ``a = min(pack_sizes)``. For each residue ``r`` in ``0..a-1``, the
+    Apéry set records ``w_r`` — the SMALLEST purchasable amount congruent to
+    ``r`` modulo ``a`` [8]. Because adding an ``a``-pack moves any purchasable
+    amount to the next member of its residue class, an amount ``n`` is
+    purchasable **iff** ``n >= w_{n mod a}``, and the Frobenius number is
+    ``max_r(w_r) - a`` (Brauer–Shockley formula [9]).
+
+    The set is built with Nijenhuis's shortest-path method [10]: one graph
+    node per residue class, and for every other pack size ``p`` an edge
+    ``r -> (r + p) mod a`` of weight ``p``. Dijkstra's algorithm from node 0
+    then yields exactly ``w_r`` as the shortest-path distance to node ``r``.
+    Runtime is O(a * k * log a) for k pack sizes — effectively instant for
+    pack sizes up to 100.
+
+    Args:
+        pack_sizes: Iterable of validated pack sizes (each >= 2) whose gcd
+            must be 1 (otherwise some residue classes are unreachable and the
+            Apéry set is not fully defined).
+
+    Returns:
+        Dict mapping each residue ``r`` (0..a-1) to ``w_r``, the smallest
+        purchasable amount congruent to ``r`` mod ``a``.
+
+    Raises:
+        NoSolutionError: If gcd(pack_sizes) > 1.
+    """
+    sizes = validate_pack_sizes(pack_sizes)
+    if not solution_exists(sizes):
+        raise NoSolutionError(
+            f"gcd({', '.join(map(str, sizes))}) > 1 — some residue classes "
+            "are entirely unreachable, so the Apéry set is not defined and "
+            "no largest unreachable number exists."
+        )
+
+    a = sizes[0]           # smallest pack size; residues are taken mod a
+    others = sizes[1:]     # non-empty here: a single size >= 2 has gcd >= 2
+
+    # Dijkstra over the residue graph. distances[r] = smallest purchasable
+    # amount congruent to r (mod a) reachable using only the *other* pack
+    # sizes; a-packs are implicit (they move within a residue class).
+    distances: dict[int, Optional[int]] = {r: None for r in range(a)}
+    distances[0] = 0
+    frontier: list[tuple[int, int]] = [(0, 0)]  # (distance, residue)
+    while frontier:
+        dist, residue = heapq.heappop(frontier)
+        if dist > distances[residue]:  # stale heap entry
+            continue
+        for p in others:
+            new_dist = dist + p
+            new_residue = (residue + p) % a
+            if distances[new_residue] is None or new_dist < distances[new_residue]:
+                distances[new_residue] = new_dist
+                heapq.heappush(frontier, (new_dist, new_residue))
+
+    # gcd == 1 guarantees every residue class was reached.
+    return {r: d for r, d in distances.items()}
+
+
+def find_largest_unreachable_apery(pack_sizes: Iterable[int]) -> int:
+    """Find the Frobenius number directly from the Apéry set.
+
+    Uses the Brauer–Shockley formula [9]: with ``a = min(pack_sizes)`` and
+    Apéry set values ``w_r``, the largest unpurchasable amount is
+
+        g = max_r(w_r) - a
+
+    (the largest non-representable member of the residue class whose first
+    representable member arrives latest). This needs no scanning loop and no
+    constraint solver — see :func:`apery_set` for how the table is built.
+
+    Args:
+        pack_sizes: Iterable of validated pack sizes (each >= 2) whose gcd
+            must be 1.
+
+    Returns:
+        The largest number of nuggets that cannot be purchased exactly.
+
+    Raises:
+        NoSolutionError: If gcd(pack_sizes) > 1.
+    """
+    sizes = validate_pack_sizes(pack_sizes)
+    table = apery_set(sizes)
+    return max(table.values()) - sizes[0]
 
 
 def find_largest_unreachable(

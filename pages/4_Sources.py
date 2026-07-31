@@ -63,6 +63,25 @@ page).
    as used in `core/solver.py`.
    [or-tools.github.io/docs/pdoc/ortools/sat/python/cp_model.html](https://or-tools.github.io/docs/pdoc/ortools/sat/python/cp_model.html)
 
+8. **Apéry, R. (1946).** "Sur les branches superlinéaires des courbes
+   algébriques." *Comptes Rendus de l'Académie des Sciences de Paris*, 222,
+   1198–1200. Introduces the set now known as the **Apéry set** of a
+   numerical semigroup, used by the app's default solver. (See also
+   Wikipedia, ["Numerical semigroup"](https://en.wikipedia.org/wiki/Numerical_semigroup),
+   for a modern statement.)
+
+9. **Brauer, A., & Shockley, J. E. (1962).** "On a problem of Frobenius."
+   *Journal für die reine und angewandte Mathematik*, 211, 215–220. Source
+   of the **Brauer–Shockley formula**
+   $g(p_1,\\dots,p_k) = \\max_r(w_r) - a$ relating the Frobenius number to
+   the Apéry set, and of the $O(1)$ membership criterion
+   $n \\in S \\iff n \\ge w_{n \\bmod a}$.
+
+10. **Nijenhuis, A. (1979).** "A minimal-path algorithm for the 'money
+    changing problem'." *The American Mathematical Monthly*, 86(10),
+    832–835. The shortest-path (Dijkstra) construction of the Apéry set
+    used in `core/solver.py` (`apery_set`).
+
 ---
 
 **Artwork note:** the nugget images on the landing page are original

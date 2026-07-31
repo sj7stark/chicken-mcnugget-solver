@@ -24,7 +24,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from core import (  # noqa: E402
     NoSolutionError,
+    apery_set,
     find_largest_unreachable,
+    find_largest_unreachable_apery,
     solution_exists,
     validate_pack_sizes,
 )
@@ -164,6 +166,78 @@ def test_no_solution_raises() -> None:
             raise AssertionError(f"expected NoSolutionError for {packs!r}")
         except NoSolutionError:
             pass
+
+
+def test_apery_set_mcnugget() -> None:
+    """The Apéry set of {6, 9, 20} matches the hand-computed table."""
+    assert apery_set([6, 9, 20]) == {0: 0, 1: 49, 2: 20, 3: 9, 4: 40, 5: 29}
+
+
+def test_apery_set_membership_criterion() -> None:
+    """n is representable iff n >= w_{n mod a}, cross-checked against DP."""
+    for packs in ([6, 9, 20], [2, 3], [6, 10, 15], [11, 13, 15, 17, 19]):
+        a = min(packs)
+        table = apery_set(packs)
+        limit = max(table.values()) + a + 5
+        reachable = dp_representable(limit, packs)
+        for n in range(limit + 1):
+            assert (n >= table[n % a]) == reachable[n], (packs, n)
+
+
+def test_apery_method_known_cases() -> None:
+    """The Apéry/Brauer–Shockley solver reproduces all known answers."""
+    for packs, expected in KNOWN_CASES:
+        if expected is None:
+            continue
+        assert find_largest_unreachable_apery(packs) == expected, packs
+
+
+def test_apery_method_random_cases() -> None:
+    """Randomized cross-check: Apéry solver vs. the DP reference."""
+    import random
+
+    rng = random.Random(98765)
+    tested = 0
+    while tested < 60:
+        k = rng.randint(2, 5)
+        packs = sorted(rng.sample(range(2, 101), k))
+        if reduce(gcd, packs) != 1:
+            continue
+        tested += 1
+        assert find_largest_unreachable_apery(packs) == dp_frobenius(packs), packs
+
+
+def test_apery_agrees_with_window_search() -> None:
+    """Both solver approaches return identical answers on random inputs."""
+    import random
+
+    rng = random.Random(555)
+    tested = 0
+    while tested < 25:
+        k = rng.randint(2, 5)
+        packs = sorted(rng.sample(range(2, 35), k))
+        if reduce(gcd, packs) != 1:
+            continue
+        tested += 1
+        window = find_largest_unreachable(
+            packs, is_representable=make_dp_checker(packs)
+        )
+        assert find_largest_unreachable_apery(packs) == window, packs
+
+
+def test_apery_no_solution_raises() -> None:
+    """Apéry functions raise NoSolutionError when gcd > 1."""
+    for packs, expected in KNOWN_CASES:
+        if expected is not None:
+            continue
+        for fn in (apery_set, find_largest_unreachable_apery):
+            try:
+                fn(packs)
+                raise AssertionError(
+                    f"expected NoSolutionError from {fn.__name__} for {packs!r}"
+                )
+            except NoSolutionError:
+                pass
 
 
 def test_cpsat_checker() -> None:
