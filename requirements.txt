@@ -1,0 +1,7 @@
+# Runtime dependencies for the Chicken Nugget Problem Solver.
+# Streamlit Community Cloud installs exactly this file.
+streamlit>=1.40
+ortools>=9.8
+# Used only by scripts/generate_images.py (regenerating the artwork);
+# also a transitive dependency of Streamlit itself.
+pillow>=10.0

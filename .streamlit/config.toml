@@ -1,0 +1,11 @@
+# Streamlit theme — warm "golden fried" palette to match the artwork.
+[theme]
+base = "light"
+primaryColor = "#D98E04"
+backgroundColor = "#FFF9EF"
+secondaryBackgroundColor = "#F7EBD5"
+textColor = "#3B2A15"
+font = "sans serif"
+
+[browser]
+gatherUsageStats = false
