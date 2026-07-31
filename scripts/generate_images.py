@@ -187,6 +187,93 @@ def _paper_background(width: int, height: int) -> Image.Image:
     return img
 
 
+# ---------------------------------------------------------------------------
+# Organization icons for the About page.
+#
+# These are ORIGINAL letter-tile icons drawn in each organization's brand
+# colors — deliberately NOT the organizations' trademarked logos (Block M,
+# NBC peacock, Ford oval, Walmart spark, ...), which cannot be copied without
+# permission. To use an official logo you have rights to, simply replace the
+# corresponding PNG in assets/icons/ (same filename); the app loads whatever
+# file is present.
+# ---------------------------------------------------------------------------
+ICON_SPECS: list[tuple[str, str, str, str]] = [
+    # (filename stem, tile text, background hex, text hex)
+    ("umich", "M", "#00274C", "#FFCB05"),        # U-M blue / maize
+    ("honeywell", "H", "#EE3124", "#FFFFFF"),
+    ("cvs", "CVS", "#CC0000", "#FFFFFF"),
+    ("atd", "ATD", "#003B71", "#FFFFFF"),
+    ("nbcu", "NBC", "#4B286D", "#FFFFFF"),
+    ("ford", "F", "#003478", "#FFFFFF"),
+    ("walmart", "W", "#0071CE", "#FFC220"),      # Walmart blue / spark yellow
+]
+
+
+def _find_bold_font(size: int):
+    """Locate a bold TrueType font available on most systems.
+
+    Args:
+        size: Font size in points.
+
+    Returns:
+        A ``PIL.ImageFont`` object (falls back to the default bitmap font).
+    """
+    from PIL import ImageFont
+
+    candidates = [
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+        "C:/Windows/Fonts/arialbd.ttf",
+        "/System/Library/Fonts/Helvetica.ttc",
+    ]
+    for path in candidates:
+        try:
+            return ImageFont.truetype(path, size)
+        except OSError:
+            continue
+    return ImageFont.load_default()
+
+
+def _draw_org_icon(text: str, bg_hex: str, fg_hex: str, size: int = 128) -> Image.Image:
+    """Draw a rounded-square letter tile (original, non-trademarked icon).
+
+    Args:
+        text: 1–3 characters shown on the tile (e.g. "M", "CVS").
+        bg_hex: Tile background color, e.g. "#00274C".
+        fg_hex: Letter color, e.g. "#FFCB05".
+        size: Output width/height in pixels.
+
+    Returns:
+        RGBA ``PIL.Image.Image`` tile.
+    """
+    s = size * SS
+    img = Image.new("RGBA", (s, s), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+    draw.rounded_rectangle([0, 0, s - 1, s - 1], radius=int(s * 0.22), fill=bg_hex)
+    # Scale the font so 1-letter and 3-letter tiles both fit comfortably.
+    font = _find_bold_font(int(s * (0.58 if len(text) == 1 else 0.30)))
+    left, top, right, bottom = draw.textbbox((0, 0), text, font=font)
+    draw.text(
+        ((s - (right - left)) / 2 - left, (s - (bottom - top)) / 2 - top),
+        text,
+        font=font,
+        fill=fg_hex,
+    )
+    return img.resize((size, size), Image.LANCZOS)
+
+
+def generate_icons() -> None:
+    """Generate every organization letter-tile icon into ``assets/icons/``.
+
+    Returns:
+        None. Writes one PNG per entry in :data:`ICON_SPECS`.
+    """
+    icons_dir = ASSETS_DIR / "icons"
+    icons_dir.mkdir(parents=True, exist_ok=True)
+    for stem, text, bg_hex, fg_hex in ICON_SPECS:
+        _draw_org_icon(text, bg_hex, fg_hex).save(icons_dir / f"{stem}.png")
+
+
 def generate_all() -> None:
     """Generate every asset image and write it into ``assets/``.
 
@@ -225,6 +312,9 @@ def generate_all() -> None:
     d.ellipse([s * 0.30, s * 0.18, s * 0.70, s * 0.58], fill=(214, 224, 238, 255))  # head
     d.ellipse([s * 0.14, s * 0.62, s * 0.86, s * 1.30], fill=(214, 224, 238, 255))  # shoulders
     avatar.resize((512, 512), Image.LANCZOS).save(ASSETS_DIR / "author_placeholder.png")
+
+    # Organization letter-tile icons for the About page.
+    generate_icons()
 
 
 if __name__ == "__main__":
