@@ -1,12 +1,13 @@
-"""Landing page for the Chicken Nugget Problem Solver Streamlit app.
+"""Landing page and navigation for the Chicken McNugget Problem Solver app.
 
 Run locally from the repository root with:
 
     streamlit run streamlit_app.py
 
-The other pages (Problem Solver, The Math, About the Author, Sources) live in
-the ``pages/`` directory and are picked up automatically by Streamlit's
-multipage mechanism.
+Navigation uses Streamlit's explicit ``st.navigation`` API (instead of the
+automatic ``pages/`` discovery) so the landing page appears in the sidebar
+as **Home** — both locally and on Streamlit Community Cloud, regardless of
+the main file's name. The page scripts still live in ``pages/``.
 
 The Streamlit Community Cloud deployment uses a small shim as its main module
 (see the repository root); that shim imports this module and calls
@@ -30,11 +31,11 @@ def render_landing_page() -> None:
     Returns:
         None. Writes the page content directly to the running Streamlit app.
     """
-    st.title(f"{NUGGET_EMOJI} The Chicken Nugget Problem Solver")
+    st.title(f"{NUGGET_EMOJI} Chicken McNugget Problem Solver")
     author_byline()
 
     st.image(str(ASSETS_DIR / "nugget_banner.jpg"), use_container_width=True)
-    st.caption("The subject of our problem: delicious chicken nuggets.")
+    st.caption("Delicious chicken nuggets")
 
     st.header("What is the Chicken Nugget Problem?")
     st.markdown(
@@ -84,7 +85,7 @@ constraint programming solver** to search for the answer.
 
 
 def main() -> None:
-    """Configure the page and render the landing page.
+    """Configure the page, build the navigation, and run the current page.
 
     This is the single entry point used by BOTH ways of running the app:
     directly (``streamlit run streamlit_app.py``) and via the deployment
@@ -94,11 +95,26 @@ def main() -> None:
         None.
     """
     st.set_page_config(
-        page_title="Chicken Nugget Problem Solver",
+        page_title="Chicken McNugget Problem Solver",
         page_icon=NUGGET_EMOJI,
         layout="wide",
     )
-    render_landing_page()
+    pages = st.navigation(
+        [
+            st.Page(
+                render_landing_page,
+                title="Home",
+                icon=NUGGET_EMOJI,
+                url_path="home",
+                default=True,
+            ),
+            st.Page("pages/1_Problem_Solver.py", title="Problem Solver"),
+            st.Page("pages/2_The_Math.py", title="The Math"),
+            st.Page("pages/3_About_the_Author.py", title="About the Author"),
+            st.Page("pages/4_Sources.py", title="Sources"),
+        ]
+    )
+    pages.run()
 
 
 if __name__ == "__main__":

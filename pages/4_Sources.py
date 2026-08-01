@@ -8,13 +8,10 @@ from __future__ import annotations
 
 import streamlit as st
 
-from core.ui import NUGGET_EMOJI, author_byline
+from core.ui import author_byline
 
-st.set_page_config(
-    page_title="Sources — Chicken Nugget Problem",
-    page_icon=NUGGET_EMOJI,
-    layout="wide",
-)
+# Page config (title, icon, wide layout) is set once for the whole app in
+# streamlit_app.main(), which routes here via st.navigation.
 
 st.title("📚 Sources & Citations")
 author_byline()

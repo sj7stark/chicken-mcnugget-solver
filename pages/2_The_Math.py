@@ -7,13 +7,10 @@ from __future__ import annotations
 
 import streamlit as st
 
-from core.ui import ASSETS_DIR, NUGGET_EMOJI, author_byline
+from core.ui import ASSETS_DIR, author_byline
 
-st.set_page_config(
-    page_title="The Math — Chicken Nugget Problem",
-    page_icon=NUGGET_EMOJI,
-    layout="wide",
-)
+# Page config (title, icon, wide layout) is set once for the whole app in
+# streamlit_app.main(), which routes here via st.navigation.
 
 st.title("📐 The Math Behind the Solver")
 author_byline()

@@ -13,8 +13,8 @@ from pathlib import Path
 import streamlit as st
 import streamlit.components.v1 as components
 
-# The closest standard emoji to a chicken nugget.
-NUGGET_EMOJI: str = "\U0001F357"  # 🍗
+# The emoji used to represent a chicken nugget throughout the app.
+NUGGET_EMOJI: str = "\U0001F954"  # 🥔
 
 # Repository root (this file lives in repo_root/core/).
 REPO_ROOT: Path = Path(__file__).resolve().parent.parent
@@ -32,7 +32,8 @@ def author_byline() -> None:
     """
     st.markdown(
         f"Built by **[{AUTHOR_NAME}]({LINKEDIN_URL})** — "
-        "Operations Research | Data Science"
+        "Lead Data Scientist | Operations Research (OR) | Career Content | "
+        "Over 26,000 followers"
     )
 
 

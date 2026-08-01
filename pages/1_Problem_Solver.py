@@ -25,11 +25,8 @@ from core import (
 )
 from core.ui import NUGGET_EMOJI, answer_box, author_byline, no_solution_banner
 
-st.set_page_config(
-    page_title="Problem Solver — Chicken Nugget Problem",
-    page_icon=NUGGET_EMOJI,
-    layout="wide",
-)
+# Page config (title, icon, wide layout) is set once for the whole app in
+# streamlit_app.main(), which routes here via st.navigation.
 
 # Session-state keys used by this page (grouped here for easy reference).
 KEY_NUM_PACKS = "num_pack_sizes"    # dropdown: how many pack sizes
