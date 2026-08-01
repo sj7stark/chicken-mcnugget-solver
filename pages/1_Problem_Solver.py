@@ -2,10 +2,12 @@
 
 Page flow (driven by ``st.session_state``):
 
-1. The user picks how many pack sizes exist (2–5) from a dropdown.
-2. One numeric input appears per pack size (integers 2–100; type a value or
+1. The user picks how many pack sizes exist (2–20) from a dropdown.
+2. One numeric input appears per pack size (integers 2–250; type a value or
    use the +/- steppers).
-3. A big **Solve** button appears; clicking it runs the CP-SAT search.
+3. A big **Solve** button appears; clicking it runs the chosen solver. The
+   button is disabled while any entered pack size is outside the valid
+   range.
 4. The result is shown — either the animated "No Solution" banner or the
    answer with one nugget emoji per nugget — plus a **Clear** button that
    resets the page back to step 1.
@@ -32,7 +34,7 @@ from core.ui import NUGGET_EMOJI, answer_box, author_byline, no_solution_banner
 KEY_NUM_PACKS = "num_pack_sizes"    # dropdown: how many pack sizes
 KEY_METHOD = "solver_method"        # dropdown: which solver approach to use
 KEY_RESULT = "solve_result"         # dict with the outcome of a solve run
-PACK_KEY_PREFIX = "pack_size_"      # pack_size_0 .. pack_size_4
+PACK_KEY_PREFIX = "pack_size_"      # pack_size_0 .. pack_size_19
 
 # Solver approach labels shown in the method dropdown.
 METHOD_APERY = "Residue-class table (Apéry set) — instant"
@@ -42,16 +44,17 @@ METHOD_CPSAT = "CP-SAT sliding window (Google OR-Tools)"
 def clear_all() -> None:
     """Reset the page: forget the pack count, pack sizes, and any result.
 
-    Used as the callback of the Clear button; deleting the widget keys sends
-    the user back to the initial "select the number of packs" state.
+    Used as the callback of the Clear button. The pack-count dropdown is
+    explicitly set back to ``None`` (no selection), so after clearing, the
+    page shows the "Select the number of pack sizes…" placeholder again.
 
     Returns:
         None. Mutates ``st.session_state`` in place.
     """
-    st.session_state.pop(KEY_NUM_PACKS, None)
+    st.session_state[KEY_NUM_PACKS] = None
     st.session_state.pop(KEY_METHOD, None)
     st.session_state.pop(KEY_RESULT, None)
-    for i in range(5):
+    for i in range(20):
         st.session_state.pop(f"{PACK_KEY_PREFIX}{i}", None)
 
 
@@ -72,7 +75,7 @@ def run_solver(pack_sizes: list[int], method: str) -> None:
     (int | None), and ``method`` (str) so it survives Streamlit reruns.
 
     Args:
-        pack_sizes: The pack sizes entered by the user (2–5 integers).
+        pack_sizes: The pack sizes entered by the user (2–20 integers).
         method: One of ``METHOD_APERY`` or ``METHOD_CPSAT``.
 
     Returns:
@@ -127,7 +130,7 @@ def render_inputs() -> list[int] | None:
     """
     st.selectbox(
         "How many different pack sizes are available?",
-        options=[2, 3, 4, 5],
+        options=list(range(2, 21)),
         index=None,
         placeholder="Select the number of pack sizes…",
         key=KEY_NUM_PACKS,
@@ -140,24 +143,30 @@ def render_inputs() -> list[int] | None:
     st.markdown("#### Enter each pack size")
     st.caption(
         f"Whole numbers from {MIN_PACK_SIZE} to {MAX_PACK_SIZE}. Type a value "
-        "or use the **− / +** steppers to change it by 1."
+        "or use the **− / +** steppers to change it by 1. The Solve button "
+        "stays disabled while any pack size is out of range."
     )
-    defaults = [6, 9, 20, 4, 25]  # friendly starting values
-    columns = st.columns(num_packs)
+    defaults = [
+        6, 9, 20, 4, 25, 7, 11, 13, 17, 19,
+        23, 29, 31, 37, 41, 43, 47, 53, 59, 61,
+    ]  # friendly starting values
+    # Up to 10 inputs per row so 20 packs stay readable.
     pack_sizes: list[int] = []
-    for i, column in enumerate(columns):
-        with column:
-            st.markdown(f"**Pack #{i + 1}**")
-            value = st.number_input(
-                f"Size of pack #{i + 1}",
-                min_value=MIN_PACK_SIZE,
-                max_value=MAX_PACK_SIZE,
-                value=defaults[i],
-                step=1,
-                key=f"{PACK_KEY_PREFIX}{i}",
-                label_visibility="collapsed",
-            )
-            pack_sizes.append(int(value))
+    per_row = 10
+    for start in range(0, num_packs, per_row):
+        row_indices = range(start, min(start + per_row, num_packs))
+        columns = st.columns(len(row_indices))
+        for i, column in zip(row_indices, columns):
+            with column:
+                st.markdown(f"**Pack #{i + 1}**")
+                value = st.number_input(
+                    f"Size of pack #{i + 1}",
+                    value=defaults[i],
+                    step=1,
+                    key=f"{PACK_KEY_PREFIX}{i}",
+                    label_visibility="collapsed",
+                )
+                pack_sizes.append(int(value))
     return pack_sizes
 
 
@@ -224,6 +233,16 @@ if entered_packs is not None and st.session_state.get(KEY_RESULT) is None:
             "Some pack sizes are duplicated — duplicates are treated as a "
             "single pack size."
         )
+    # Out-of-range sizes keep the Solve button disabled until corrected.
+    out_of_range = sorted(
+        {p for p in entered_packs if not MIN_PACK_SIZE <= p <= MAX_PACK_SIZE}
+    )
+    if out_of_range:
+        st.error(
+            f"Pack size(s) {', '.join(map(str, out_of_range))} are outside "
+            f"the valid range — every pack size must be a whole number from "
+            f"{MIN_PACK_SIZE} to {MAX_PACK_SIZE}. Fix them to enable Solve."
+        )
     # Solver-approach dropdown, shown together with the Solve button.
     st.selectbox(
         "Solver approach",
@@ -241,6 +260,7 @@ if entered_packs is not None and st.session_state.get(KEY_RESULT) is None:
         f"{NUGGET_EMOJI}  SOLVE  {NUGGET_EMOJI}",
         type="primary",
         use_container_width=True,
+        disabled=bool(out_of_range),
     ):
         run_solver(entered_packs, st.session_state[KEY_METHOD])
         st.rerun()

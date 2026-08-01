@@ -143,7 +143,7 @@ def test_window_search_random_cases() -> None:
     rng = random.Random(1234)
     tested = 0
     while tested < 40:
-        k = rng.randint(2, 5)
+        k = rng.randint(2, 8)
         packs = sorted(rng.sample(range(2, 40), k))
         if reduce(gcd, packs) != 1:
             continue
@@ -199,7 +199,7 @@ def test_apery_method_random_cases() -> None:
     rng = random.Random(98765)
     tested = 0
     while tested < 60:
-        k = rng.randint(2, 5)
+        k = rng.randint(2, 8)
         packs = sorted(rng.sample(range(2, 101), k))
         if reduce(gcd, packs) != 1:
             continue
@@ -214,7 +214,7 @@ def test_apery_agrees_with_window_search() -> None:
     rng = random.Random(555)
     tested = 0
     while tested < 25:
-        k = rng.randint(2, 5)
+        k = rng.randint(2, 8)
         packs = sorted(rng.sample(range(2, 35), k))
         if reduce(gcd, packs) != 1:
             continue
