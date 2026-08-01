@@ -7,6 +7,14 @@ Run locally from the repository root with:
 The other pages (Problem Solver, The Math, About the Author, Sources) live in
 the ``pages/`` directory and are picked up automatically by Streamlit's
 multipage mechanism.
+
+The Streamlit Community Cloud deployment uses a small shim as its main module
+(see the repository root); that shim imports this module and calls
+:func:`main` on every rerun. Keeping the rendering inside a function — rather
+than at module level — matters: Python caches imported modules, so
+module-level ``st.*`` calls in an imported module would only execute on the
+very first script run and the landing page would render blank on every rerun
+after that.
 """
 
 from __future__ import annotations
@@ -14,12 +22,6 @@ from __future__ import annotations
 import streamlit as st
 
 from core.ui import ASSETS_DIR, LINKEDIN_URL, NUGGET_EMOJI, author_byline
-
-st.set_page_config(
-    page_title="Chicken Nugget Problem Solver",
-    page_icon=NUGGET_EMOJI,
-    layout="wide",
-)
 
 
 def render_landing_page() -> None:
@@ -31,11 +33,8 @@ def render_landing_page() -> None:
     st.title(f"{NUGGET_EMOJI} The Chicken Nugget Problem Solver")
     author_byline()
 
-    st.image(str(ASSETS_DIR / "nugget_banner.png"), use_container_width=True)
-    st.caption(
-        "Original illustrations created programmatically for this project "
-        "(see `scripts/generate_images.py`) — no copyrighted images used."
-    )
+    st.image(str(ASSETS_DIR / "nugget_banner.jpg"), use_container_width=True)
+    st.caption("The subject of our problem: delicious chicken nuggets.")
 
     st.header("What is the Chicken Nugget Problem?")
     st.markdown(
@@ -81,7 +80,26 @@ constraint programming solver** to search for the answer.
         )
         st.page_link("pages/2_The_Math.py", label="Read the Math", icon="📐")
     with col2:
-        st.image(str(ASSETS_DIR / "nugget_1.png"), width=280)
+        st.image(str(ASSETS_DIR / "nugget_photo.jpg"), width=280)
 
 
-render_landing_page()
+def main() -> None:
+    """Configure the page and render the landing page.
+
+    This is the single entry point used by BOTH ways of running the app:
+    directly (``streamlit run streamlit_app.py``) and via the deployment
+    shim, which imports this module and calls ``main()`` explicitly.
+
+    Returns:
+        None.
+    """
+    st.set_page_config(
+        page_title="Chicken Nugget Problem Solver",
+        page_icon=NUGGET_EMOJI,
+        layout="wide",
+    )
+    render_landing_page()
+
+
+if __name__ == "__main__":
+    main()
