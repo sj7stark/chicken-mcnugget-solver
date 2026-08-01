@@ -65,7 +65,7 @@ just not instant.
 ## Project structure
 
 ```
-chicken-nugget-solver/
+chicken-mcnugget-solver/
 ├── streamlit_app.py          # Landing page (entry point)
 ├── pages/
 │   ├── 1_Problem_Solver.py   # Input UI + solve/clear flow
@@ -87,8 +87,8 @@ chicken-nugget-solver/
 Requires Python 3.9+ (3.11 recommended).
 
 ```bash
-git clone <your-github-url>/chicken-nugget-solver.git
-cd chicken-nugget-solver
+git clone https://github.com/sj7stark/chicken-mcnugget-solver.git
+cd chicken-mcnugget-solver
 python -m venv .venv
 # Windows:
 .venv\Scripts\activate
@@ -116,10 +116,19 @@ tested as well.
 
 ## Deploy on Streamlit Community Cloud
 
-1. Push this repository to GitHub.
+1. Push this repository to GitHub
+   ([github.com/sj7stark/chicken-mcnugget-solver](https://github.com/sj7stark/chicken-mcnugget-solver)).
 2. Go to [share.streamlit.io](https://share.streamlit.io), sign in with
    GitHub, and click **New app**.
-3. Select this repo, branch `main`, and main file `streamlit_app.py`.
+3. Select `sj7stark/chicken-mcnugget-solver`, branch `main`, and main file
+   `streamlit_app.py`.
+
+> **Note — existing deployment:** the currently deployed app was created
+> with `🥔_Chicken_McNugget_Problem_Solver.py` as its main module, and
+> Streamlit Cloud cannot change an app's main file after creation. That
+> file is kept in the repo as a thin shim that imports `streamlit_app`, so
+> the existing deployment keeps working. If you delete the app and redeploy
+> with `streamlit_app.py` as the main file, you can remove the shim.
 4. Click **Deploy** — dependencies install automatically from
    `requirements.txt`. The app fits comfortably in the free tier's 1 GB
    resource allowance (OR-Tools is the largest dependency at ~100 MB
