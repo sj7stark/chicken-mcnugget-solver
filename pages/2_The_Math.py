@@ -92,7 +92,8 @@ The theorem is named after the classic 6, 9, 20 McDonald's nugget-pack
 puzzle [1][5] — although with *three* pack sizes the formula above no longer
 applies. In fact, **no general closed-form formula is known for three or
 more pack sizes**, and computing the Frobenius number in general is
-NP-hard [4]. That is exactly why this app switches to a solver-based search.
+NP-hard [4]. That is exactly why this app computes the answer with the
+residue-class method described below.
 """
 )
 st.image(
@@ -102,80 +103,14 @@ st.image(
 )
 
 # ---------------------------------------------------------------------------
-# 3. The CP-SAT sliding-window algorithm
+# 3. The residue-class (Apéry set) method
 # ---------------------------------------------------------------------------
-st.header("3. Approach A — the CP-SAT sliding-window search")
+st.header("3. The residue-class table (Apéry set)")
 st.markdown(
     r"""
-Once the gcd test says a solution exists, the app runs a **sliding-window
-search** powered by **Google OR-Tools' CP-SAT constraint programming
-solver** [6][7].
-
-**The feasibility question.** For a target quantity $N$, CP-SAT is asked
-whether the equation
-"""
-)
-st.latex(
-    r"p_1 x_1 + p_2 x_2 + p_3 x_3 + p_4 x_4 + p_5 x_5 = N,"
-    r"\qquad x_i \in \{0, 1, 2, \ldots\}"
-)
-st.markdown(
-    r"""
-has **any** solution (unused pack slots simply don't appear). The $x_i$ are
-integer decision variables — how many packs of size $p_i$ to buy. There is
-**no objective function**: this is a pure feasibility check, which is exactly
-what CP-SAT excels at [6].
-
-**The search loop.** Let $P = \max(p_1,\dots,p_k)$.
-
-```text
-solve_threshold ← P          # consecutive feasible N's still needed
-answer ← 0                   # largest infeasible N found so far
-N ← 1
-while solve_threshold > 0:
-    if CP-SAT finds x with  p·x = N:      # N is purchasable
-        solve_threshold ← solve_threshold − 1
-    else:                                  # N is NOT purchasable
-        answer ← N
-        solve_threshold ← P                # reset the window
-    N ← N + 1
-return answer
-```
-
-**Why it can stop.** Suppose $P$ consecutive quantities
-$N-P+1, \dots, N$ are all purchasable. Any larger quantity $M$ can be
-reduced by repeatedly subtracting the smallest pack size $p_1$
-($p_1 \le P$, so the window is wide enough) until it lands inside that
-window — and "something purchasable plus whole packs" is still purchasable.
-So once the window of $P$ consecutive successes closes, **no unreachable
-quantity can ever appear again**, and the last recorded failure is the
-answer. (Stopping after a run of consecutive representable values is the
-standard round-based way to detect the Frobenius number [2][5].)
-
-**Termination is guaranteed** by a Schur-type bound: when
-$\gcd = 1$, the Frobenius number is at most
-$(p_{\min}-1)(p_{\max}-1) - 1$ [2][4], so the loop provably finishes within
-that many iterations plus one window.
-"""
-)
-st.info(
-    "Fine print: the search issues one CP-SAT solve per candidate N. For "
-    "small everyday inputs (like 6, 9, 20) the answer appears in about a "
-    "second; for adversarial inputs such as packs of 99 and 100 (answer "
-    "9,701) it can take a few minutes, since thousands of tiny models are "
-    "solved sequentially. That cost is exactly what Approach B below "
-    "eliminates — which is why it is the app's default."
-)
-
-# ---------------------------------------------------------------------------
-# 4. The residue-class (Apéry set) method
-# ---------------------------------------------------------------------------
-st.header("4. Approach B (default) — the residue-class table (Apéry set)")
-st.markdown(
-    r"""
-The default solver skips the scanning loop entirely using a classical piece
-of number theory: the **Apéry set** of a numerical semigroup, introduced by
-Roger Apéry in 1946 [8].
+The solver needs no brute-force scanning loop at all, thanks to a classical
+piece of number theory: the **Apéry set** of a numerical semigroup, introduced by
+Roger Apéry in 1946 [6].
 
 #### Setup and notation
 
@@ -196,7 +131,7 @@ remainder $r$ when divided by $a$ — the purchasable amounts are simply
 *"everything from the first one upward, in steps of $a$."*
 
 The **Apéry set of $S$ with respect to $a$** collects those "first ones"
-[8][9]:
+[6][7]:
 """
 )
 st.latex(
@@ -220,7 +155,7 @@ st.markdown(
 **The Frobenius number by formula.** The largest *un*purchasable member of
 residue class $r$ is exactly $w_r - a$ (one $a$-step below the class's
 first purchasable member). Taking the worst class gives the
-**Brauer–Shockley formula** [9]:
+**Brauer–Shockley formula** [7]:
 """
 )
 st.latex(
@@ -231,7 +166,7 @@ st.markdown(
 #### Building the table: Nijenhuis's shortest-path algorithm
 
 The table is computed with a lovely reduction to a shortest-path problem,
-due to Nijenhuis [10]. Build a directed graph with one node per residue
+due to Nijenhuis [8]. Build a directed graph with one node per residue
 $0, 1, \dots, a-1$. For every *other* pack size $p_j \ne a$, add an edge
 """
 )
@@ -241,7 +176,7 @@ st.markdown(
 Buying an $a$-pack never changes a residue, so the cheapest way to *reach*
 residue $r$ from 0 using the other packs is precisely $w_r$ — and that is a
 single run of **Dijkstra's algorithm** from node 0, in
-$O(a \cdot k \log a)$ time. For pack sizes capped at 100 this is
+$O(a \cdot k \log a)$ time. For pack sizes capped at 250 this is
 microseconds.
 
 **Worked example — packs $\{6, 9, 20\}$**, residues mod $a = 6$:
@@ -262,9 +197,5 @@ famous McNugget number, with no search loop at all.
 $\gcd > 1$, the residues that are not multiples of the gcd are simply
 unreachable in Nijenhuis's graph — Dijkstra reports no path — which *is*
 the "No Solution" verdict.
-
-Both approaches are available in the Problem Solver's dropdown; they always
-agree (the app's unit tests verify this), differing only in speed and in
-what they demonstrate — number theory versus constraint programming.
 """
 )

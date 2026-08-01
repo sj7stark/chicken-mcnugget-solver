@@ -43,45 +43,32 @@ page).
    *Combinatorica* 16, 1996).
 
 5. **Brilliant.org — "Postage Stamp Problem / Chicken McNugget Theorem."**
-   Accessible treatment of the problem, examples, and the
-   consecutive-values stopping idea used by round-based searches.
+   Accessible treatment of the problem, with examples.
    [brilliant.org/wiki/postage-stamp-problem-chicken-mcnugget-theorem](https://brilliant.org/wiki/postage-stamp-problem-chicken-mcnugget-theorem/)
 
-6. **Google OR-Tools — Constraint Optimization (CP-SAT).**
-   Official documentation for the CP-SAT solver used for every feasibility
-   check in this app.
-   [developers.google.com/optimization/cp](https://developers.google.com/optimization/cp)
-
-7. **Google OR-Tools — `ortools.sat.python.cp_model` API reference.**
-   API documentation for `CpModel`, `NewIntVar`, `Add`, and `CpSolver`
-   as used in `core/solver.py`.
-   [or-tools.github.io/docs/pdoc/ortools/sat/python/cp_model.html](https://or-tools.github.io/docs/pdoc/ortools/sat/python/cp_model.html)
-
-8. **Apéry, R. (1946).** "Sur les branches superlinéaires des courbes
+6. **Apéry, R. (1946).** "Sur les branches superlinéaires des courbes
    algébriques." *Comptes Rendus de l'Académie des Sciences de Paris*, 222,
    1198–1200. Introduces the set now known as the **Apéry set** of a
-   numerical semigroup, used by the app's default solver. (See also
+   numerical semigroup, used by the app's solver. (See also
    Wikipedia, ["Numerical semigroup"](https://en.wikipedia.org/wiki/Numerical_semigroup),
    for a modern statement.)
 
-9. **Brauer, A., & Shockley, J. E. (1962).** "On a problem of Frobenius."
+7. **Brauer, A., & Shockley, J. E. (1962).** "On a problem of Frobenius."
    *Journal für die reine und angewandte Mathematik*, 211, 215–220. Source
    of the **Brauer–Shockley formula**
    $g(p_1,\\dots,p_k) = \\max_r(w_r) - a$ relating the Frobenius number to
    the Apéry set, and of the $O(1)$ membership criterion
    $n \\in S \\iff n \\ge w_{n \\bmod a}$.
 
-10. **Nijenhuis, A. (1979).** "A minimal-path algorithm for the 'money
-    changing problem'." *The American Mathematical Monthly*, 86(10),
-    832–835. The shortest-path (Dijkstra) construction of the Apéry set
-    used in `core/solver.py` (`apery_set`).
+8. **Nijenhuis, A. (1979).** "A minimal-path algorithm for the 'money
+   changing problem'." *The American Mathematical Monthly*, 86(10),
+   832–835. The shortest-path (Dijkstra) construction of the Apéry set
+   used in `core/solver.py` (`apery_set`).
 
 ---
 
-**Artwork note:** the nugget images on the landing page are original
-illustrations generated programmatically for this project
-(`scripts/generate_images.py`) and are not copied from, or derived from, any
-photograph or third-party artwork. The Chicken McNugget Theorem figure on the
-Math page was provided by the project owner.
+**Artwork note:** the chicken nugget photographs on the landing page were
+provided by the project owner. The Chicken McNugget Theorem figure on the
+Math page was also provided by the project owner.
     """
 )

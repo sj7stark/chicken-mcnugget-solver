@@ -3,7 +3,7 @@
 Exposes the math/solver API (``core.solver``) and the shared Streamlit UI
 helpers (``core.ui``). Import the solver pieces directly from the package:
 
-    from core import find_largest_unreachable, solution_exists
+    from core import find_largest_unreachable_apery, solution_exists
 """
 
 from core.solver import (
@@ -13,9 +13,7 @@ from core.solver import (
     MIN_PACK_SIZE,
     NoSolutionError,
     apery_set,
-    find_largest_unreachable,
     find_largest_unreachable_apery,
-    is_representable_cpsat,
     solution_exists,
     validate_pack_sizes,
 )
@@ -27,9 +25,7 @@ __all__ = [
     "MIN_PACK_SIZE",
     "NoSolutionError",
     "apery_set",
-    "find_largest_unreachable",
     "find_largest_unreachable_apery",
-    "is_representable_cpsat",
     "solution_exists",
     "validate_pack_sizes",
 ]

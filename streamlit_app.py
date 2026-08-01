@@ -69,9 +69,10 @@ it does.
         st.subheader("Try it yourself")
         st.markdown(
             """
-Head to the **Problem Solver** page (sidebar), enter 2–5 pack sizes, and hit
-**Solve**. Behind the scenes the app uses **Google OR-Tools' CP-SAT
-constraint programming solver** to search for the answer.
+Head to the **Problem Solver** page (sidebar), enter 2–20 pack sizes, and hit
+**Solve**. Behind the scenes the app computes the answer instantly with the
+**residue-class (Apéry set) table** — a classic piece of number theory
+explained on **The Math** page.
             """
         )
         st.page_link(

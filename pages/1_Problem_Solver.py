@@ -5,9 +5,9 @@ Page flow (driven by ``st.session_state``):
 1. The user picks how many pack sizes exist (2–20) from a dropdown.
 2. One numeric input appears per pack size (integers 2–250; type a value or
    use the +/- steppers).
-3. A big **Solve** button appears; clicking it runs the chosen solver. The
-   button is disabled while any entered pack size is outside the valid
-   range.
+3. A big **Solve** button appears; clicking it computes the answer with the
+   residue-class (Apéry set) table. The button is disabled while any
+   entered pack size is outside the valid range.
 4. The result is shown — either the animated "No Solution" banner or the
    answer with one nugget emoji per nugget — plus a **Clear** button that
    resets the page back to step 1.
@@ -20,7 +20,6 @@ import streamlit as st
 from core import (
     MAX_PACK_SIZE,
     MIN_PACK_SIZE,
-    find_largest_unreachable,
     find_largest_unreachable_apery,
     solution_exists,
     validate_pack_sizes,
@@ -32,13 +31,8 @@ from core.ui import NUGGET_EMOJI, answer_box, author_byline, no_solution_banner
 
 # Session-state keys used by this page (grouped here for easy reference).
 KEY_NUM_PACKS = "num_pack_sizes"    # dropdown: how many pack sizes
-KEY_METHOD = "solver_method"        # dropdown: which solver approach to use
 KEY_RESULT = "solve_result"         # dict with the outcome of a solve run
 PACK_KEY_PREFIX = "pack_size_"      # pack_size_0 .. pack_size_19
-
-# Solver approach labels shown in the method dropdown.
-METHOD_APERY = "Residue-class table (Apéry set) — instant"
-METHOD_CPSAT = "CP-SAT sliding window (Google OR-Tools)"
 
 
 def clear_all() -> None:
@@ -52,31 +46,24 @@ def clear_all() -> None:
         None. Mutates ``st.session_state`` in place.
     """
     st.session_state[KEY_NUM_PACKS] = None
-    st.session_state.pop(KEY_METHOD, None)
     st.session_state.pop(KEY_RESULT, None)
     for i in range(20):
         st.session_state.pop(f"{PACK_KEY_PREFIX}{i}", None)
 
 
-def run_solver(pack_sizes: list[int], method: str) -> None:
+def run_solver(pack_sizes: list[int]) -> None:
     """Solve the problem for ``pack_sizes`` and stash the outcome in state.
 
-    Dispatches to the chosen solver approach:
-
-    * ``METHOD_APERY`` — builds the residue-class (Apéry set) table via
-      Nijenhuis's shortest-path algorithm and reads the answer directly
-      from the Brauer–Shockley formula. Effectively instant.
-    * ``METHOD_CPSAT`` — the sliding-window search that asks Google
-      OR-Tools' CP-SAT solver one feasibility question per candidate N
-      (shows a progress bar; can take a while for large pack sizes).
+    Builds the residue-class (Apéry set) table via Nijenhuis's shortest-path
+    algorithm and reads the answer directly from the Brauer–Shockley
+    formula. Effectively instant — no scanning loop needed.
 
     The outcome is stored in ``st.session_state[KEY_RESULT]`` as a dict
-    with keys ``packs`` (list[int]), ``exists`` (bool), ``answer``
-    (int | None), and ``method`` (str) so it survives Streamlit reruns.
+    with keys ``packs`` (list[int]), ``exists`` (bool), and ``answer``
+    (int | None) so it survives Streamlit reruns.
 
     Args:
         pack_sizes: The pack sizes entered by the user (2–20 integers).
-        method: One of ``METHOD_APERY`` or ``METHOD_CPSAT``.
 
     Returns:
         None. Mutates ``st.session_state`` in place.
@@ -85,39 +72,14 @@ def run_solver(pack_sizes: list[int], method: str) -> None:
 
     if not solution_exists(packs):
         st.session_state[KEY_RESULT] = {
-            "packs": packs, "exists": False, "answer": None, "method": method,
+            "packs": packs, "exists": False, "answer": None,
         }
         return
 
-    if method == METHOD_APERY:
-        # Table build + formula: no scanning loop, no progress bar needed.
-        answer = find_largest_unreachable_apery(packs)
-    else:
-        progress = st.progress(0.0, text="Solving with CP-SAT…")
-
-        def update_progress(current: int, cap: int) -> None:
-            """Advance the progress bar (fraction of the theoretical cap).
-
-            Args:
-                current: Target amount just checked by the solver.
-                cap: Safety cap (theoretical upper bound) for the search.
-
-            Returns:
-                None.
-            """
-            progress.progress(
-                min(current / cap, 1.0),
-                text=f"Solving with CP-SAT… checked up to {current} nuggets",
-            )
-
-        with st.spinner("Asking Google OR-Tools CP-SAT…"):
-            answer = find_largest_unreachable(
-                packs, progress_callback=update_progress
-            )
-        progress.empty()
-
     st.session_state[KEY_RESULT] = {
-        "packs": packs, "exists": True, "answer": answer, "method": method,
+        "packs": packs,
+        "exists": True,
+        "answer": find_largest_unreachable_apery(packs),
     }
 
 
@@ -181,10 +143,7 @@ def render_result() -> None:
         return
 
     packs_text = ", ".join(map(str, result["packs"]))
-    st.caption(
-        f"Pack sizes used: {packs_text} · Approach: "
-        f"{result.get('method', METHOD_APERY)}"
-    )
+    st.caption(f"Pack sizes used: {packs_text}")
 
     if not result["exists"]:
         no_solution_banner()
@@ -208,10 +167,9 @@ def render_result() -> None:
 st.title("🧠 Problem Solver")
 author_byline()
 st.markdown(
-    "Pick your pack sizes below, choose a solver approach, then smash that "
-    "**Solve** button. The default **residue-class (Apéry set) table** "
-    "answers instantly; the **CP-SAT** option shows Google OR-Tools solving "
-    "the same problem with constraint programming."
+    "Pick your pack sizes below, then smash that **Solve** button. The "
+    "**residue-class (Apéry set) table** computes the answer instantly — "
+    "see **The Math** page for how it works."
 )
 
 entered_packs = render_inputs()
@@ -243,26 +201,13 @@ if entered_packs is not None and st.session_state.get(KEY_RESULT) is None:
             f"the valid range — every pack size must be a whole number from "
             f"{MIN_PACK_SIZE} to {MAX_PACK_SIZE}. Fix them to enable Solve."
         )
-    # Solver-approach dropdown, shown together with the Solve button.
-    st.selectbox(
-        "Solver approach",
-        options=[METHOD_APERY, METHOD_CPSAT],
-        index=0,  # default: the residue-class (Apéry set) table
-        key=KEY_METHOD,
-        help=(
-            "The residue-class table answers instantly using number theory "
-            "(see The Math page, section 4). The CP-SAT option demonstrates "
-            "solving one constraint-programming feasibility model per "
-            "candidate amount — same answer, slower on large pack sizes."
-        ),
-    )
     if st.button(
         f"{NUGGET_EMOJI}  SOLVE  {NUGGET_EMOJI}",
         type="primary",
         use_container_width=True,
         disabled=bool(out_of_range),
     ):
-        run_solver(entered_packs, st.session_state[KEY_METHOD])
+        run_solver(entered_packs)
         st.rerun()
 
 render_result()
