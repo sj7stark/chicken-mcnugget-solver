@@ -64,11 +64,5 @@ page).
    changing problem'." *The American Mathematical Monthly*, 86(10),
    832–835. The shortest-path (Dijkstra) construction of the Apéry set
    used in `core/solver.py` (`apery_set`).
-
----
-
-**Artwork note:** the chicken nugget photographs on the landing page were
-provided by the project owner. The Chicken McNugget Theorem figure on the
-Math page was also provided by the project owner.
     """
 )

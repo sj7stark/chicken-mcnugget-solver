@@ -62,14 +62,14 @@ def icon_entry(icon_name: str, heading: str, body: str) -> None:
             st.markdown(body)
 
 
-st.title("👋 About the Author")
+st.title("👋 About the Creator")
 
 photo_col, bio_col = st.columns([1, 2], gap="large")
 
 with photo_col:
     st.image(str(find_profile_photo()), width=280)
     st.markdown(
-        f"### [{AUTHOR_NAME}]({LINKEDIN_URL})\n"
+        f"### {AUTHOR_NAME}\n"
         "Lead Data Scientist · Operations Research · "
         "Mathematical Optimization · AI · Simulation · Python\n\n"
         f"🔗 [Connect on LinkedIn]({LINKEDIN_URL}) — 26,000+ followers"
@@ -154,13 +154,5 @@ with bio_col:
         """
 - **Patent US12503309B2:** System and method for delivering packages (2025)
 - **Patent US12008507B2:** Systems and methods for handling packages (2024)
-        """
-    )
-
-    st.markdown(
-        """
-Along the way he has mentored junior data scientists and interns (several
-of whom earned return offers), and he shares career advice with a LinkedIn
-audience of more than 26,000 followers.
         """
     )

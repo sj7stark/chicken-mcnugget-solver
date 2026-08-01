@@ -115,7 +115,7 @@ def main() -> None:
             st.Page("pages/2_The_Math.py", title="The Math", icon="🔢"),
             st.Page(
                 "pages/3_About_the_Author.py",
-                title="About the Author",
+                title="About the Creator",
                 icon="👋",
             ),
             st.Page("pages/4_Sources.py", title="Sources", icon="📚"),
