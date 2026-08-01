@@ -25,9 +25,9 @@ from typing import Iterable, Optional
 # Input bounds enforced by the UI and re-validated here (defense in depth).
 # ---------------------------------------------------------------------------
 MIN_PACK_SIZE: int = 2
-MAX_PACK_SIZE: int = 250
+MAX_PACK_SIZE: int = 100
 MIN_NUM_PACKS: int = 2
-MAX_NUM_PACKS: int = 20
+MAX_NUM_PACKS: int = 5
 
 
 class NoSolutionError(ValueError):
@@ -111,7 +111,7 @@ def apery_set(pack_sizes: Iterable[int]) -> dict[int, int]:
     ``r -> (r + p) mod a`` of weight ``p``. Dijkstra's algorithm from node 0
     then yields exactly ``w_r`` as the shortest-path distance to node ``r``.
     Runtime is O(a * k * log a) for k pack sizes — effectively instant for
-    pack sizes up to 250.
+    pack sizes up to 100.
 
     Args:
         pack_sizes: Iterable of validated pack sizes (each >= 2) whose gcd

@@ -80,7 +80,7 @@ KNOWN_CASES: list[tuple[list[int], int | None]] = [
 def test_validate_pack_sizes() -> None:
     """Validation accepts good input, dedupes, and rejects bad input."""
     assert validate_pack_sizes([9, 6, 20, 9]) == [6, 9, 20]
-    for bad in ([1, 5], [0, 3], [-2, 7], [251, 3], [2.5, 3], [True, 3]):
+    for bad in ([1, 5], [0, 3], [-2, 7], [101, 3], [2.5, 3], [True, 3]):
         try:
             validate_pack_sizes(bad)  # type: ignore[arg-type]
             raise AssertionError(f"expected ValueError for {bad!r}")
@@ -125,7 +125,7 @@ def test_apery_method_random_cases() -> None:
     rng = random.Random(98765)
     tested = 0
     while tested < 60:
-        k = rng.randint(2, 8)
+        k = rng.randint(2, 5)
         packs = sorted(rng.sample(range(2, 101), k))
         if reduce(gcd, packs) != 1:
             continue

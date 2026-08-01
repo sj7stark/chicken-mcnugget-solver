@@ -176,7 +176,7 @@ st.markdown(
 Buying an $a$-pack never changes a residue, so the cheapest way to *reach*
 residue $r$ from 0 using the other packs is precisely $w_r$ — and that is a
 single run of **Dijkstra's algorithm** from node 0, in
-$O(a \cdot k \log a)$ time. For pack sizes capped at 250 this is
+$O(a \cdot k \log a)$ time. For pack sizes capped at 100 this is
 microseconds.
 
 **Worked example — packs $\{6, 9, 20\}$**, residues mod $a = 6$:

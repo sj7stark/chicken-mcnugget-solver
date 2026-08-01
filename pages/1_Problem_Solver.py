@@ -2,8 +2,8 @@
 
 Page flow (driven by ``st.session_state``):
 
-1. The user picks how many pack sizes exist (2–20) from a dropdown.
-2. One numeric input appears per pack size (integers 2–250; type a value or
+1. The user picks how many pack sizes exist (2–5) from a dropdown.
+2. One numeric input appears per pack size (integers 2–100; type a value or
    use the +/- steppers).
 3. A big **Solve** button appears; clicking it computes the answer with the
    residue-class (Apéry set) table. The button is disabled while any
@@ -32,7 +32,7 @@ from core.ui import NUGGET_EMOJI, answer_box, author_byline, no_solution_banner
 # Session-state keys used by this page (grouped here for easy reference).
 KEY_NUM_PACKS = "num_pack_sizes"    # dropdown: how many pack sizes
 KEY_RESULT = "solve_result"         # dict with the outcome of a solve run
-PACK_KEY_PREFIX = "pack_size_"      # pack_size_0 .. pack_size_19
+PACK_KEY_PREFIX = "pack_size_"      # pack_size_0 .. pack_size_4
 
 
 def clear_all() -> None:
@@ -47,7 +47,7 @@ def clear_all() -> None:
     """
     st.session_state[KEY_NUM_PACKS] = None
     st.session_state.pop(KEY_RESULT, None)
-    for i in range(20):
+    for i in range(5):
         st.session_state.pop(f"{PACK_KEY_PREFIX}{i}", None)
 
 
@@ -63,7 +63,7 @@ def run_solver(pack_sizes: list[int]) -> None:
     (int | None) so it survives Streamlit reruns.
 
     Args:
-        pack_sizes: The pack sizes entered by the user (2–20 integers).
+        pack_sizes: The pack sizes entered by the user (2–5 integers).
 
     Returns:
         None. Mutates ``st.session_state`` in place.
@@ -92,7 +92,7 @@ def render_inputs() -> list[int] | None:
     """
     st.selectbox(
         "How many different pack sizes are available?",
-        options=list(range(2, 21)),
+        options=[2, 3, 4, 5],
         index=None,
         placeholder="Select the number of pack sizes…",
         key=KEY_NUM_PACKS,
@@ -108,27 +108,35 @@ def render_inputs() -> list[int] | None:
         "or use the **− / +** steppers to change it by 1. The Solve button "
         "stays disabled while any pack size is out of range."
     )
-    defaults = [
-        6, 9, 20, 4, 25, 7, 11, 13, 17, 19,
-        23, 29, 31, 37, 41, 43, 47, 53, 59, 61,
-    ]  # friendly starting values
-    # Up to 10 inputs per row so 20 packs stay readable.
+    defaults = [6, 9, 20, 4, 25]  # friendly starting values
+    # Keep the − / + steppers visible: Streamlit removes them entirely when
+    # a number input is rendered too narrow, so (a) never show more than 5
+    # inputs side by side, and (b) force the stepper buttons to stay
+    # displayed via CSS as a safety net.
+    st.markdown(
+        """
+        <style>
+        [data-testid="stNumberInput"] button {
+            display: flex !important;
+            visibility: visible !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
     pack_sizes: list[int] = []
-    per_row = 10
-    for start in range(0, num_packs, per_row):
-        row_indices = range(start, min(start + per_row, num_packs))
-        columns = st.columns(len(row_indices))
-        for i, column in zip(row_indices, columns):
-            with column:
-                st.markdown(f"**Pack #{i + 1}**")
-                value = st.number_input(
-                    f"Size of pack #{i + 1}",
-                    value=defaults[i],
-                    step=1,
-                    key=f"{PACK_KEY_PREFIX}{i}",
-                    label_visibility="collapsed",
-                )
-                pack_sizes.append(int(value))
+    columns = st.columns(num_packs)
+    for i, column in enumerate(columns):
+        with column:
+            st.markdown(f"**Pack #{i + 1}**")
+            value = st.number_input(
+                f"Size of pack #{i + 1}",
+                value=defaults[i],
+                step=1,
+                key=f"{PACK_KEY_PREFIX}{i}",
+                label_visibility="collapsed",
+            )
+            pack_sizes.append(int(value))
     return pack_sizes
 
 

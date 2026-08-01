@@ -69,7 +69,7 @@ it does.
         st.subheader("Try it yourself")
         st.markdown(
             """
-Head to the **Problem Solver** page (sidebar), enter 2–20 pack sizes, and hit
+Head to the **Problem Solver** page (sidebar), enter 2–5 pack sizes, and hit
 **Solve**. Behind the scenes the app computes the answer instantly with the
 **residue-class (Apéry set) table** — a classic piece of number theory
 explained on **The Math** page.

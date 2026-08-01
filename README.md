@@ -1,7 +1,7 @@
 # 🥔 Chicken McNugget Problem Solver
 
 A [Streamlit](https://streamlit.io) web app that solves the **Chicken Nugget
-Problem** (a.k.a. the **Frobenius coin problem**): given 2–20 nugget pack
+Problem** (a.k.a. the **Frobenius coin problem**): given 2–5 nugget pack
 sizes, find the **largest number of nuggets that cannot be purchased
 exactly** — or prove that no such largest number exists.
 
@@ -12,9 +12,9 @@ Built by [Steven Stark](https://www.linkedin.com/in/steven-stark).
 | Page | What it does |
 |---|---|
 | **Home** | What the Chicken Nugget Problem is |
-| **Problem Solver** | Pick 2–20 pack sizes (integers 2–250), hit **Solve**, and get the answer — or an animated **No Solution** verdict with falling nuggets |
+| **Problem Solver** | Pick 2–5 pack sizes (integers 2–100), hit **Solve**, and get the answer — or an animated **No Solution** verdict with falling nuggets |
 | **The Math** | When a solution exists (the gcd test), the Chicken McNugget Theorem, and the residue-class (Apéry set) method |
-| **About the Author** | Background, education, career highlights, and patents |
+| **About the Creator** | Background, education, career highlights, and patents |
 | **Sources** | Numbered citations for every mathematical claim |
 
 ## How the solver works
