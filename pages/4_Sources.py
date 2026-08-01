@@ -8,13 +8,10 @@ from __future__ import annotations
 
 import streamlit as st
 
-from core.ui import author_byline
-
 # Page config (title, icon, wide layout) is set once for the whole app in
 # streamlit_app.main(), which routes here via st.navigation.
 
 st.title("📚 Sources & Citations")
-author_byline()
 st.markdown(
     """
 The mathematical statements, formulas, and algorithmic ideas used in this app

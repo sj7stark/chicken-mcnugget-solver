@@ -108,10 +108,16 @@ def main() -> None:
                 url_path="home",
                 default=True,
             ),
-            st.Page("pages/1_Problem_Solver.py", title="Problem Solver"),
-            st.Page("pages/2_The_Math.py", title="The Math"),
-            st.Page("pages/3_About_the_Author.py", title="About the Author"),
-            st.Page("pages/4_Sources.py", title="Sources"),
+            st.Page(
+                "pages/1_Problem_Solver.py", title="Problem Solver", icon="🧠"
+            ),
+            st.Page("pages/2_The_Math.py", title="The Math", icon="🔢"),
+            st.Page(
+                "pages/3_About_the_Author.py",
+                title="About the Author",
+                icon="👋",
+            ),
+            st.Page("pages/4_Sources.py", title="Sources", icon="📚"),
         ]
     )
     pages.run()

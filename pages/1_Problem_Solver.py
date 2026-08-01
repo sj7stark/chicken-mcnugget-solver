@@ -196,7 +196,7 @@ def render_result() -> None:
     )
 
 
-st.title(f"{NUGGET_EMOJI} Problem Solver")
+st.title("🧠 Problem Solver")
 author_byline()
 st.markdown(
     "Pick your pack sizes below, choose a solver approach, then smash that "

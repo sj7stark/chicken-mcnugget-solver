@@ -7,13 +7,12 @@ from __future__ import annotations
 
 import streamlit as st
 
-from core.ui import ASSETS_DIR, author_byline
+from core.ui import ASSETS_DIR
 
 # Page config (title, icon, wide layout) is set once for the whole app in
 # streamlit_app.main(), which routes here via st.navigation.
 
-st.title("📐 The Math Behind the Solver")
-author_byline()
+st.title("🔢 The Math Behind the Solver")
 st.markdown(
     "Numbered citations like **[1]** point to the entries on the "
     "**Sources** page."
