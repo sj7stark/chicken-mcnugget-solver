@@ -9,10 +9,12 @@ Built by [Steven Stark](https://www.linkedin.com/in/steven-stark).
 
 ## The app
 
+Five pages, reachable from the sidebar:
+
 | Page | What it does |
 |---|---|
-| **Home** | What the Chicken Nugget Problem is |
-| **Problem Solver** | Pick 2–5 pack sizes (integers 2–100), hit **Solve**, and get the answer — or an animated **No Solution** verdict with falling nuggets |
+| **Home** | Explains the Chicken Nugget Problem with the classic 6/9/20 example, and links to the Problem Solver and The Math |
+| **Problem Solver** | Pick how many pack sizes you have (2–5), enter each one (integers 2–100), hit **Solve**, and get the answer — or an animated **No Solution** verdict with falling nuggets. **Clear** resets the page |
 | **The Math** | When a solution exists (the gcd test), the Chicken McNugget Theorem, and the residue-class (Apéry set) method |
 | **About the Creator** | Background, education, career highlights, and patents |
 | **Sources** | Numbered citations for every mathematical claim |
@@ -39,20 +41,27 @@ for every allowed input.
 ```
 chicken-mcnugget-solver/
 ├── streamlit_app.py          # Home page + st.navigation (entry point)
+├── 🥔_Chicken_McNugget_Problem_Solver.py  # Deployment shim → streamlit_app.main()
 ├── pages/
 │   ├── 1_Problem_Solver.py   # Input UI + solve/clear flow
 │   ├── 2_The_Math.py         # Existence test, theorem, Apéry method
-│   ├── 3_About_the_Author.py # Bio, career summary, patents
+│   ├── 3_About_the_Author.py # Bio, education, career summary, patents
 │   └── 4_Sources.py          # Citations
 ├── core/
 │   ├── solver.py             # gcd test + Apéry set + Brauer–Shockley
 │   └── ui.py                 # Shared UI helpers (animations, emoji box)
-├── assets/                   # Images (nugget photos, logos, figures)
-├── scripts/generate_images.py# Regenerates placeholder artwork (unused)
+├── assets/                   # Images (nugget photos, theorem figure, logos/)
 ├── tests/test_solver.py      # Unit tests (DP oracle cross-checks)
 ├── requirements.txt
+├── LICENSE
 └── .streamlit/config.toml    # Warm golden theme
 ```
+
+The emoji-named file at the root is a thin shim: the deployed Streamlit
+Community Cloud app was created with that file as its main module, and
+Streamlit Cloud cannot change an app's main file after creation. The shim
+imports `streamlit_app` and calls its `main()` so both entry points render the
+identical app.
 
 ## Run locally
 
@@ -85,33 +94,6 @@ The Apéry-set solver is verified against an independent dynamic-programming
 oracle on dozens of randomized cases plus a table of known answers
 (including the classic 6, 9, 20 → 43).
 
-## Deploy on Streamlit Community Cloud
-
-1. Push this repository to GitHub
-   ([github.com/sj7stark/chicken-mcnugget-solver](https://github.com/sj7stark/chicken-mcnugget-solver)).
-2. Go to [share.streamlit.io](https://share.streamlit.io), sign in with
-   GitHub, and click **New app**.
-3. Select `sj7stark/chicken-mcnugget-solver`, branch `main`, and main file
-   `streamlit_app.py`.
-
-> **Note — existing deployment:** the currently deployed app was created
-> with `🥔_Chicken_McNugget_Problem_Solver.py` as its main module, and
-> Streamlit Cloud cannot change an app's main file after creation. That
-> file is kept in the repo as a thin shim that calls
-> `streamlit_app.main()`, so the existing deployment keeps working. If you
-> delete the app and redeploy with `streamlit_app.py` as the main file,
-> you can remove the shim.
-4. Click **Deploy** — dependencies install automatically from
-   `requirements.txt`. The app fits easily in the free tier's 1 GB
-   resource allowance.
-
-## Images
-
-* The chicken nugget photos on the Home page and the organization logos on
-  the About page live in `assets/` and were provided by the project owner.
-* **Author photo:** `assets/profile.jpg` — replace it to update the About
-  page portrait.
-
 ## Sources
 
 See the in-app **Sources** page for the full numbered citation list
@@ -121,5 +103,4 @@ Apéry 1946, Brauer & Shockley 1962, and Nijenhuis 1979).
 
 ## License
 
-No license file yet — add one (e.g. MIT) before making the GitHub repository
-public if you want others to reuse the code.
+Released under the [MIT License](LICENSE) — © 2026 Steven Stark.

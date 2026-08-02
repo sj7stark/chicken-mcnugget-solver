@@ -1,6 +1,5 @@
 # Runtime dependencies for the Chicken Nugget Problem Solver.
 # Streamlit Community Cloud installs exactly this file.
+# Streamlit is the only direct dependency; it pulls in Pillow (used to serve
+# the images in assets/) on its own.
 streamlit>=1.40
-# Used only by scripts/generate_images.py (regenerating the artwork);
-# also a transitive dependency of Streamlit itself.
-pillow>=10.0
