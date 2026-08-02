@@ -1,7 +1,7 @@
 """About the Author page — bio, education, and career summary.
 
-The profile photo is loaded from ``assets/profile.jpg`` (or ``profile.png``)
-if present; otherwise a neutral placeholder avatar is shown.
+The profile photo is loaded from ``assets/profile.jpg`` (``.png`` and
+``.jpeg`` are also accepted); replace that file to change the portrait.
 
 Organization logos live in ``assets/logos/`` (one image per organization,
 matched by filename stem — e.g. ``ford.jpg`` for the ``"ford"`` entry).
@@ -22,17 +22,18 @@ LOGOS_DIR = ASSETS_DIR / "logos"
 
 
 def find_profile_photo() -> Path:
-    """Locate the author photo, falling back to the placeholder avatar.
+    """Locate the author photo in ``assets/``.
 
     Returns:
-        Path to ``assets/profile.*`` when available, otherwise the generated
-        placeholder image.
+        Path to the first existing ``assets/profile.*`` file, or the
+        ``assets/profile.jpg`` path when none of them exist (Streamlit then
+        reports the missing image rather than showing a stale placeholder).
     """
     for name in ("profile.jpg", "profile.png", "profile.jpeg"):
         candidate = ASSETS_DIR / name
         if candidate.exists():
             return candidate
-    return ASSETS_DIR / "author_placeholder.png"
+    return ASSETS_DIR / "profile.jpg"
 
 
 def icon_entry(icon_name: str, heading: str, body: str) -> None:
